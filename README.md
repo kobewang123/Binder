@@ -2,8 +2,7 @@
 
 
 # app
-《王小二图解android-Binder APP篇》代码
-《王小二图解android-Binder APP篇》配图
+《王小二图解android-Binder APP篇》代码 配图
 
 # framework
 todo

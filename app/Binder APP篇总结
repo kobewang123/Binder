@@ -1,0 +1,44 @@
+总结
+1.只能创建Binder对象，不能创建BinderProxy对象，BinderProxy对象由Binder驱动和framework配合自动生成。
+
+2.调用BinderProxy对象.transact方法，Binder对象.onTransact方法将会响应，这就是一次Binde通信
+public boolean transact(int code, Parcel data, Parcel reply, int flags)
+public boolean onTransact(int code, Parcel data, Parcel reply, int flags)
+
+3.
+Binder或者BinderProxy对象在打包进Parcel以后，可以在已经存在BinderProxy对象transact->Binder对象onTransact中传递。
+Binder或者BinderProxy对象在Parcel的解包过程中，会判断如果Binder对象创建的进程和当前解包的进程是否为同一个进程。
+如果是同一个进程，解包解出来的就是Binder对象本身
+如果不是同一进程，解包解出来的就是BinderProxy对象
+
+4.世界上第一个Binder对象是由servicemanager进程创建的，其他进程可以通过Binder的SDK轻松的拿到servicemanager创建的Binder对象对应的BinderProxy对象
+这一条和前面三条配合在一次，就构成了丰富多彩的Binder世界。
+
+5.所有Binder接口都是基于transact和onTransact的封装，servicemanager的getService和addService也是如此。
+返回值 函数名（参数1， 参数2，.....）
+transact(int code, Parcel data, Parcel reply, int flags)
+code:返回值
+data:参数1， 参数2，.....
+reply:返回值 或者参数1， 参数2，.....（实参）
+flags:代表oneway的flag
+
+6.如何快速的解剖一次Binder通信
+1.BinderProxy怎么来的，封装BinderProxy的类是什么。
+2.BinderProxy对应的Binder对象是那个类，创建在哪个进程。
+3.Binder调用分装的方法是什么
+
+举例：startActivity这次调用
+1.BinderProxy怎么来的，封装BinderProxy的类是什么。
+ServiceManager.getService来的，封装类是ActivityManager
+
+2.BinderProxy对应的Binder对象是那个类，创建在哪个进程。
+ActivityManagerService创建在system_server进程。
+
+3.Binder调用封装的方法是什么
+startActivity
+
+7.实名Binder和匿名Binder
+实名Binder：调用servicemanager的addService的Binder对象。
+匿名Binder：除了servicemanager以外的Binder接口传递的Binder对象。
+
+
